@@ -16,7 +16,7 @@ namespace Borodar.LD34
         public void GenerateQuestion()
         {
             var q = new Question();
-            _text.text =  q.FirstOperand + " " + q.OperationString + " " + q.SecondOperand + " = " + q.Result;
+            _text.text =  q.FirstOperand + " " + q.OperationString + " " + q.SecondOperand + " = " + q.TrueResult + " | "+ q.FakeResult;
         }
     }
 }

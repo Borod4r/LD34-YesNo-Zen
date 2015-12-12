@@ -9,7 +9,8 @@ namespace Borodar.LD34.Questions
         public int SecondOperand;
         public OperationType OperationType;
         public string OperationString;
-        public int Result;
+        public int TrueResult;
+        public int FakeResult;
 
         public Question()
         {
@@ -17,33 +18,41 @@ namespace Borodar.LD34.Questions
 
             switch (OperationType)
             {
-                case OperationType.addition:
+                case OperationType.Addition:
                     OperationString = "+";
                     FirstOperand = Random.Range(0, 100);
                     SecondOperand = Random.Range(0, 100);
-                    Result = FirstOperand + SecondOperand;
+                    // True result
+                    TrueResult = FirstOperand + SecondOperand;
                     break;
-                case OperationType.subtraction:
+                case OperationType.Subtraction:
                     OperationString = "-";
                     FirstOperand = Random.Range(0, 100);
                     SecondOperand = Random.Range(0, FirstOperand);
-                    Result = FirstOperand - SecondOperand;
+                    // True result
+                    TrueResult = FirstOperand - SecondOperand;
                     break;
-                case OperationType.multiplication:
+                case OperationType.Multiplication:
                     FirstOperand = Random.Range(0, 10);
                     SecondOperand = Random.Range(0, 10);
                     OperationString = "x";
-                    Result = FirstOperand*SecondOperand;
+                    // True result
+                    TrueResult = FirstOperand*SecondOperand;
                     break;
-                case OperationType.division:
+                case OperationType.Division:
                     SecondOperand = Random.Range(1, 100);
                     FirstOperand = SecondOperand*Random.Range(0, 10);
                     OperationString = "/";
-                    Result = FirstOperand/SecondOperand;
+                    // True result
+                    TrueResult = FirstOperand/SecondOperand;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            // Fake result
+            FakeResult = TrueResult + Random.Range(-TrueResult / 2, TrueResult / 2);
+            if (FakeResult == TrueResult) FakeResult++;
         }
     }
 }
