@@ -8,7 +8,7 @@ namespace Borodar.LD34
         public void OnClickHandler()
         {
             // TODO: just quick test - remove me later
-            GlobalManager.Game.LoadScene(Application.loadedLevelName);
+            SceneManager.Instance.UpdateQuestion();
         }
     }
 }
