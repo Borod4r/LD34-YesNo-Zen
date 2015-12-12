@@ -13,10 +13,10 @@ namespace Borodar.LD34
             _text = GetComponent<Text>();
         }
 
-        public void GenerateQuestion()
+        public void GenerateQuestion(bool isThatTrue)
         {
-            var q = new Question();
-            _text.text =  q.FirstOperand + " " + q.OperationString + " " + q.SecondOperand + " = " + q.TrueResult + " | "+ q.FakeResult;
+            var question = new Question();
+            _text.text =  (isThatTrue) ? question.GetTrueString() : question.GetFakeString();
         }
     }
 }

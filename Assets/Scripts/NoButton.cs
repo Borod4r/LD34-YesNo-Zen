@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Borodar.LD34
 {
-    public class YesButton : MonoBehaviour
+    public class NoButton : MonoBehaviour
     {
         public void OnClickHandler()
         {
-            SceneManager.Instance.CheckAnswer(true);
+            SceneManager.Instance.CheckAnswer(false);
         }
     }
 }

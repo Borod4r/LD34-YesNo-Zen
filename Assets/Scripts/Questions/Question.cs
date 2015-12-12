@@ -54,5 +54,16 @@ namespace Borodar.LD34.Questions
             FakeResult = TrueResult + Random.Range(-TrueResult / 2, TrueResult / 2);
             if (FakeResult == TrueResult) FakeResult++;
         }
+
+        public string GetTrueString()
+        {
+            return FirstOperand + " " + OperationString + " " + SecondOperand + " = " + TrueResult;
+        }
+
+        public string GetFakeString()
+        {
+            return FirstOperand + " " + OperationString + " " + SecondOperand + " = " + FakeResult;
+        }
+
     }
 }
