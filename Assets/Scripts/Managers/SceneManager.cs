@@ -10,6 +10,7 @@ namespace Borodar.LD34.Managers
     {
         [Space(10)]
         public Background Background;
+        public Text ScoreText;
         public Text QuestionText;
         public Text HintText;
         [Space(10)]
@@ -20,6 +21,7 @@ namespace Borodar.LD34.Managers
         private bool _isFirstQuestion = true;
         private bool _isQuestionTrue = true;
         private bool _isCheckingAnswer;
+        private int _score;
 
         //---------------------------------------------------------------------
         // Messages
@@ -59,12 +61,11 @@ namespace Borodar.LD34.Managers
                 return; // for web-player
             }
 
-            _isFirstQuestion = false;
-
             var isAnswerCorrect = (answer == _isQuestionTrue);
             if (isAnswerCorrect)
             {
                 GlobalManager.Audio.PlayRandomCorrectSound();
+                UpdateScore();
 
                 if (_isQuestionTrue)
                 {
@@ -90,11 +91,22 @@ namespace Borodar.LD34.Managers
             }
 
             Background.CrossFadeColor();
+            _isFirstQuestion = false;
         }
 
         //---------------------------------------------------------------------
         // Helpers
         //---------------------------------------------------------------------
+
+        private void UpdateScore()
+        {
+            if (_isFirstQuestion) return;
+
+            _score++;
+
+            ScoreText.gameObject.SetActive(true);
+            ScoreText.text = "Score: " + _score.ToString("000");
+        }
 
         private IEnumerator ShowNextQuestion()
         {
