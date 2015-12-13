@@ -6,11 +6,12 @@ namespace Borodar.LD34.Managers
 {
     public class GameManager : MonoBehaviour
     {
+        private const string PREF_HIGHSCORE = "Higschore";
         public Canvas CanvasPrefab;
 
         public float FadeDuration = 0.5f;
         public float FadeDelay = 1f;
-        
+
         public bool IsFirstRun = true;
         public int HighScore;
 
@@ -51,6 +52,15 @@ namespace Borodar.LD34.Managers
         }
 
         //---------------------------------------------------------------------
+        // Messages
+        //---------------------------------------------------------------------
+
+        public void Awake()
+        {
+            LoadGameData();
+        }
+
+        //---------------------------------------------------------------------
         // Public
         //---------------------------------------------------------------------
 
@@ -68,6 +78,16 @@ namespace Borodar.LD34.Managers
         {
             if (!_isLoadingLevel)
                 StartCoroutine(LoadLevelWithFadeEffect(levelName));
+        }
+
+        public void LoadGameData()
+        {
+            HighScore = PlayerPrefs.GetInt(PREF_HIGHSCORE, 0);
+        }
+
+        public void SaveGameData()
+        {
+            PlayerPrefs.SetInt(PREF_HIGHSCORE, HighScore);
         }
 
         //---------------------------------------------------------------------
@@ -110,7 +130,7 @@ namespace Borodar.LD34.Managers
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                var step = Mathf.Lerp(start, end, Mathf.Pow(elapsed/duration, 2f));
+                var step = Mathf.Lerp(start, end, Mathf.Pow(elapsed / duration, 2f));
                 CanvasGroup.alpha = step;
 
                 yield return null;

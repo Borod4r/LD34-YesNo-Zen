@@ -158,6 +158,7 @@ namespace Borodar.LD34.Managers
             GlobalManager.Audio.PlayWrongSound();
 
             UpdateHighscore();
+            GlobalManager.Game.SaveGameData();
 
             if (_isQuestionTrue)
             {
