@@ -8,6 +8,7 @@ namespace Borodar.LD34
         public void OnClickHandler()
         {
             SceneManager.Instance.CheckAnswer(false);
+            GlobalManager.Audio.PlayRandomButtonSound();
         }
     }
 }

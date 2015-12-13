@@ -17,6 +17,8 @@ namespace Borodar.LD34.Audio
         private float _musicVolume = 1f;
         private float _sfxVolume = 1f;
 
+        private SoundCollection _sounds;
+
         //---------------------------------------------------------------------
         // Properties
         //---------------------------------------------------------------------
@@ -73,7 +75,9 @@ namespace Borodar.LD34.Audio
             _musicSource.volume = MusicVolume;
             _sfxSourcePool = new AudioSourcePool(gameObject, 4);
             _sfxSourcePool.Mute = SfxMute;
-            _sfxSourcePool.Volume = SfxVolume;            
+            _sfxSourcePool.Volume = SfxVolume;
+
+            _sounds = GetComponent<SoundCollection>();
         }
 
         protected void Start()
@@ -102,6 +106,11 @@ namespace Borodar.LD34.Audio
             audioSource.Play();
 
             return audioSource;
+        }
+
+        public AudioSource PlayRandomButtonSound()
+        {
+            return PlaySound(_sounds.GetRandomButtonSound());
         }
 
         public void SavePlayerPrefs()
