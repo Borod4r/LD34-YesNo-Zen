@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Borodar.LD34.Helpers;
+using Borodar.LD34.Questions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,14 +11,14 @@ namespace Borodar.LD34.Managers
     {
         [Space(10)]
         public Background Background;
-        public QuestionText QuestionText;        
-        public Text DebugText;
+        public Text QuestionText;        
+        public Text HintText;
         [Space(10)]
         public ParticleSystem YesParticles;
         public ParticleSystem NoParticles;
-        [Space(10)]
-        public bool IsQuestionTrue;
 
+        private Question _question;
+        private bool _isQuestionTrue;
         private bool _isCheckingAnswer;
 
         //---------------------------------------------------------------------
@@ -35,30 +36,32 @@ namespace Borodar.LD34.Managers
 
         public void GenerateQuestion()
         {
-            IsQuestionTrue = Random.value > 0.5f;
-            QuestionText.GenerateQuestion(IsQuestionTrue);
+            _question = new Question();
+            _isQuestionTrue = Random.value > 0.5f;
+
+            QuestionText.text = (_isQuestionTrue) ? _question.GetTrueString() : _question.GetFakeString();
         }
 
         public void CheckAnswer(bool answer)
         {
             if (_isCheckingAnswer) return;
 
-            var isAnswerCorrect = (answer == IsQuestionTrue);
-
-            DebugText.text = isAnswerCorrect ? "Correct" : "Wrong";
-            DebugText.gameObject.SetActive(true);
-
+            var isAnswerCorrect = (answer == _isQuestionTrue);
             if (isAnswerCorrect)
             {
-                if (IsQuestionTrue)
+                if (_isQuestionTrue)
                 {
                     YesParticles.Play();
                 }
                 else
                 {
                     NoParticles.Play();
-                    
                 }
+            }
+            else
+            {
+                HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString(); ;
+                HintText.gameObject.SetActive(true);
             }
 
             StartCoroutine(ShowResults());
@@ -75,7 +78,7 @@ namespace Borodar.LD34.Managers
             _isCheckingAnswer = true;
             yield return new WaitForSeconds(1f);
 
-            DebugText.gameObject.SetActive(false);
+            HintText.gameObject.SetActive(false);
             GenerateQuestion();
             _isCheckingAnswer = false;
         }
