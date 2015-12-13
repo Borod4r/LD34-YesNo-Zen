@@ -10,8 +10,9 @@ namespace Borodar.LD34.Managers
 
         public float FadeDuration = 0.5f;
         public float FadeDelay = 1f;
-
+        
         public bool IsFirstRun = true;
+        public int HighScore;
 
         private Canvas _canvasObject;
         private CanvasGroup _canvasGroup;

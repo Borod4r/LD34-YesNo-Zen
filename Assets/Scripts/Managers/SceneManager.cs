@@ -10,12 +10,16 @@ namespace Borodar.LD34.Managers
     {
         [Space(10)]
         public Background Background;
+        public Text HighscoreText;
         public Text ScoreText;
         public Text QuestionText;
         public Text HintText;
         [Space(10)]
         public ParticleSystem YesParticles;
         public ParticleSystem NoParticles;
+        [Space(10)]
+        public Color CorrectColor;
+        public Color WrongColor;
 
         private Question _question;
         private bool _isFirstQuestion = true;
@@ -29,14 +33,17 @@ namespace Borodar.LD34.Managers
 
         public void Start()
         {
-            if (GlobalManager.Game.IsFirstRun)
+            var game = GlobalManager.Game;
+            if (game.IsFirstRun)
             {
-                GlobalManager.Game.IsFirstRun = false;
+                game.IsFirstRun = false;
             }
             else
             {
                 QuestionText.text = "Play again?";
             }
+
+            UpdateHighscore();
         }
 
         //---------------------------------------------------------------------
@@ -80,13 +87,6 @@ namespace Borodar.LD34.Managers
             }
             else
             {
-                GlobalManager.Audio.StopMusic();
-                GlobalManager.Audio.PlayWrongSound();
-
-                HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString();
-                ;
-                HintText.gameObject.SetActive(true);
-
                 StartCoroutine(GameOver());
             }
 
@@ -104,8 +104,18 @@ namespace Borodar.LD34.Managers
 
             _score++;
 
-            ScoreText.gameObject.SetActive(true);
             ScoreText.text = "Score: " + _score.ToString("000");
+            ScoreText.gameObject.SetActive(true);
+        }
+
+        private void UpdateHighscore()
+        {
+            var game = GlobalManager.Game;
+            if (game.HighScore < _score) game.HighScore = _score;
+            if (game.HighScore <= 0) return;
+
+            HighscoreText.text = "Highscore: " + game.HighScore.ToString("000");
+            HighscoreText.gameObject.SetActive(true);
         }
 
         private IEnumerator ShowNextQuestion()
@@ -121,7 +131,25 @@ namespace Borodar.LD34.Managers
         private IEnumerator GameOver()
         {
             _isCheckingAnswer = true;
-            yield return new WaitForSeconds(3f);
+
+            GlobalManager.Audio.StopMusic();
+            GlobalManager.Audio.PlayWrongSound();            
+
+            UpdateHighscore();
+
+            if (_isQuestionTrue)
+            {
+                QuestionText.color = CorrectColor;
+            }
+            else
+            {
+                QuestionText.color = WrongColor;
+                //HintText.text = "Highscore: " + game.HighScore.ToString("000");
+                HintText.text = _question.GetTrueString();
+                HintText.gameObject.SetActive(true);
+            }
+
+            yield return new WaitForSeconds(4f);
 
             GlobalManager.Game.LoadScene(Application.loadedLevelName);
         }
