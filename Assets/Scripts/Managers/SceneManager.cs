@@ -72,7 +72,10 @@ namespace Borodar.LD34.Managers
 
         public void GenerateQuestion()
         {
-            _question = new Question();
+            var complexity = (_score + 5) / 10;
+            _timeRemaining = TIME_PER_QUESTION + complexity * 2;
+
+            _question = new Question(complexity);
             _isQuestionTrue = Random.value > 0.5f;
 
             QuestionText.text = (_isQuestionTrue) ? _question.GetTrueString() : _question.GetFakeString();
@@ -147,7 +150,6 @@ namespace Borodar.LD34.Managers
             GenerateQuestion();
 
             _isCheckingAnswer = false;
-            _timeRemaining = TIME_PER_QUESTION;
         }
 
         private IEnumerator GameOver()

@@ -12,36 +12,39 @@ namespace Borodar.LD34.Questions
         public int TrueResult;
         public int FakeResult;
 
-        public Question()
+        public Question(int complexity)
         {
             OperationType = (OperationType) Random.Range(0, Enum.GetNames(typeof (OperationType)).Length);
+
+            var complexityPow = (int) Math.Pow(10, complexity);
 
             switch (OperationType)
             {
                 case OperationType.Addition:
                     OperationString = "+";
-                    FirstOperand = Random.Range(0, 100);
-                    SecondOperand = Random.Range(0, 100);
+                    FirstOperand = Random.Range(1, 10 * complexityPow);
+                    SecondOperand = Random.Range(1, 10 * complexityPow);
                     // True result
                     TrueResult = FirstOperand + SecondOperand;
                     break;
                 case OperationType.Subtraction:
                     OperationString = "-";
-                    FirstOperand = Random.Range(0, 100);
-                    SecondOperand = Random.Range(0, FirstOperand);
+                    
+                    FirstOperand = Random.Range(1, 10 * complexityPow);
+                    SecondOperand = Random.Range(1, FirstOperand);
                     // True result
                     TrueResult = FirstOperand - SecondOperand;
                     break;
                 case OperationType.Multiplication:
-                    FirstOperand = Random.Range(0, 10);
-                    SecondOperand = Random.Range(0, 10);
+                    FirstOperand = Random.Range(1, 10 * complexity);
+                    SecondOperand = Random.Range(1, 10 * complexity);
                     OperationString = "x";
                     // True result
                     TrueResult = FirstOperand*SecondOperand;
                     break;
                 case OperationType.Division:
-                    SecondOperand = Random.Range(1, 100);
-                    FirstOperand = SecondOperand*Random.Range(0, 10);
+                    SecondOperand = Random.Range(1, 10 * complexity);
+                    FirstOperand = SecondOperand * Random.Range(1, 10 * complexity);
                     OperationString = "/";
                     // True result
                     TrueResult = FirstOperand/SecondOperand;
