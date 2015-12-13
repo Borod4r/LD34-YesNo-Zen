@@ -98,6 +98,11 @@ namespace Borodar.LD34.Audio
             _musicSource.Play();
         }
 
+        public void PauseMusic()
+        {
+            _musicSource.Pause();
+        }
+
         public AudioSource PlaySound(AudioClip clip, bool loop = false)
         {
             var audioSource = _sfxSourcePool.GetAudioSource();
@@ -108,9 +113,14 @@ namespace Borodar.LD34.Audio
             return audioSource;
         }
 
-        public AudioSource PlayRandomButtonSound()
+        public AudioSource PlayRandomCorrectSound()
         {
-            return PlaySound(_sounds.GetRandomButtonSound());
+            return PlaySound(_sounds.GetRandomCorrectSound());
+        }
+
+        public AudioSource PlayWrongSound()
+        {
+            return PlaySound(_sounds.WrongSound);
         }
 
         public void SavePlayerPrefs()

@@ -49,6 +49,8 @@ namespace Borodar.LD34.Managers
             var isAnswerCorrect = (answer == _isQuestionTrue);
             if (isAnswerCorrect)
             {
+                GlobalManager.Audio.PlayRandomCorrectSound();
+
                 if (_isQuestionTrue)
                 {
                     YesParticles.Play();
@@ -60,6 +62,9 @@ namespace Borodar.LD34.Managers
             }
             else
             {
+                GlobalManager.Audio.PauseMusic();
+                GlobalManager.Audio.PlayWrongSound();
+
                 HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString(); ;
                 HintText.gameObject.SetActive(true);
             }
