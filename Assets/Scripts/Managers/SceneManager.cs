@@ -79,7 +79,7 @@ namespace Borodar.LD34.Managers
             }
             else
             {
-                GlobalManager.Audio.PauseMusic();
+                GlobalManager.Audio.StopMusic();
                 GlobalManager.Audio.PlayWrongSound();
 
                 HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString();

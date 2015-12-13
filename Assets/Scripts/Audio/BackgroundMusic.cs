@@ -9,7 +9,7 @@ namespace Borodar.LD34.Audio
 
         protected void Start()
         {
-            GlobalManager.Audio.PlayMusic(Clip);
+            GlobalManager.Audio.PlayMusic(Clip, true);
         }
     }
 }

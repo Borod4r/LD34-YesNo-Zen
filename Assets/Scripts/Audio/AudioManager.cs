@@ -98,9 +98,9 @@ namespace Borodar.LD34.Audio
             _musicSource.Play();
         }
 
-        public void PauseMusic()
+        public void StopMusic()
         {
-            _musicSource.Pause();
+            _musicSource.Stop();
         }
 
         public AudioSource PlaySound(AudioClip clip, bool loop = false)
