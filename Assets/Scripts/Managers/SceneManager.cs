@@ -8,10 +8,13 @@ namespace Borodar.LD34.Managers
 {
     public class SceneManager : Singleton<SceneManager>
     {
+        private const float TIME_PER_QUESTION = 6f;
+
         [Space(10)]
         public Background Background;
-        public Text HighscoreText;
+        public Text TimeText;
         public Text ScoreText;
+        public Text HighscoreText;
         public Text QuestionText;
         public Text HintText;
         [Space(10)]
@@ -26,6 +29,7 @@ namespace Borodar.LD34.Managers
         private bool _isQuestionTrue = true;
         private bool _isCheckingAnswer;
         private int _score;
+        private float _timeRemaining;
 
         //---------------------------------------------------------------------
         // Messages
@@ -46,6 +50,22 @@ namespace Borodar.LD34.Managers
             UpdateHighscore();
         }
 
+        protected void Update()
+        {
+            if (_isFirstQuestion || _isCheckingAnswer) return;            
+
+            _timeRemaining -= Time.deltaTime;
+            if (_timeRemaining < 0) _timeRemaining = 0;
+
+            var seconds = _timeRemaining % 60;
+            var centiseconds = Mathf.Floor(_timeRemaining * 100) % 100;
+
+            TimeText.gameObject.SetActive(true);
+            TimeText.text = string.Format("{0:00} : {1:00}", seconds, centiseconds);
+
+            if (_timeRemaining <= 0 && !_isCheckingAnswer) StartCoroutine(GameOver());
+        }
+
         //---------------------------------------------------------------------
         // Public
         //---------------------------------------------------------------------
@@ -60,7 +80,7 @@ namespace Borodar.LD34.Managers
 
         public void CheckAnswer(bool answer)
         {
-            if (_isCheckingAnswer || (_isFirstQuestion && !answer)) return;
+            if (_isCheckingAnswer) return;
 
             if (_isFirstQuestion && !answer)
             {
@@ -125,7 +145,9 @@ namespace Borodar.LD34.Managers
 
             HintText.gameObject.SetActive(false);
             GenerateQuestion();
+
             _isCheckingAnswer = false;
+            _timeRemaining = TIME_PER_QUESTION;
         }
 
         private IEnumerator GameOver()
@@ -133,7 +155,7 @@ namespace Borodar.LD34.Managers
             _isCheckingAnswer = true;
 
             GlobalManager.Audio.StopMusic();
-            GlobalManager.Audio.PlayWrongSound();            
+            GlobalManager.Audio.PlayWrongSound();
 
             UpdateHighscore();
 
