@@ -2,7 +2,6 @@
 using Borodar.LD34.Helpers;
 using Borodar.LD34.Questions;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Borodar.LD34.Managers
@@ -11,14 +10,15 @@ namespace Borodar.LD34.Managers
     {
         [Space(10)]
         public Background Background;
-        public Text QuestionText;        
+        public Text QuestionText;
         public Text HintText;
         [Space(10)]
         public ParticleSystem YesParticles;
         public ParticleSystem NoParticles;
 
         private Question _question;
-        private bool _isQuestionTrue;
+        private bool _isFirstQuestion = true;
+        private bool _isQuestionTrue = true;
         private bool _isCheckingAnswer;
 
         //---------------------------------------------------------------------
@@ -27,7 +27,14 @@ namespace Borodar.LD34.Managers
 
         public void Start()
         {
-            GenerateQuestion();
+            if (GlobalManager.Game.IsFirstRun)
+            {
+                GlobalManager.Game.IsFirstRun = false;
+            }
+            else
+            {
+                QuestionText.text = "Play again?";
+            }
         }
 
         //---------------------------------------------------------------------
@@ -44,7 +51,15 @@ namespace Borodar.LD34.Managers
 
         public void CheckAnswer(bool answer)
         {
-            if (_isCheckingAnswer) return;
+            if (_isCheckingAnswer || (_isFirstQuestion && !answer)) return;
+
+            if (_isFirstQuestion && !answer)
+            {
+                Application.Quit();
+                return; // for web-player
+            }
+
+            _isFirstQuestion = false;
 
             var isAnswerCorrect = (answer == _isQuestionTrue);
             if (isAnswerCorrect)
@@ -59,17 +74,20 @@ namespace Borodar.LD34.Managers
                 {
                     NoParticles.Play();
                 }
+
+                StartCoroutine(ShowNextQuestion());
             }
             else
             {
                 GlobalManager.Audio.PauseMusic();
                 GlobalManager.Audio.PlayWrongSound();
 
-                HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString(); ;
+                HintText.text = _isQuestionTrue ? "But it's true!" : _question.GetTrueString();
+                ;
                 HintText.gameObject.SetActive(true);
-            }
 
-            StartCoroutine(ShowResults());
+                StartCoroutine(GameOver());
+            }
 
             Background.CrossFadeColor();
         }
@@ -78,7 +96,7 @@ namespace Borodar.LD34.Managers
         // Helpers
         //---------------------------------------------------------------------
 
-        private IEnumerator ShowResults()
+        private IEnumerator ShowNextQuestion()
         {
             _isCheckingAnswer = true;
             yield return new WaitForSeconds(1f);
@@ -86,6 +104,14 @@ namespace Borodar.LD34.Managers
             HintText.gameObject.SetActive(false);
             GenerateQuestion();
             _isCheckingAnswer = false;
+        }
+
+        private IEnumerator GameOver()
+        {
+            _isCheckingAnswer = true;
+            yield return new WaitForSeconds(3f);
+
+            GlobalManager.Game.LoadScene(Application.loadedLevelName);
         }
     }
 }
