@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using Borodar.LD34.Helpers;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Borodar.LD34.Managers
 {
     public class SceneManager : Singleton<SceneManager>
     {
+        [Space(10)]
         public Background Background;
         public QuestionText QuestionText;        
-        public Text DebugText;        
-        public bool IsThatTrue;
+        public Text DebugText;
+        [Space(10)]
+        public ParticleSystem YesParticles;
+        public ParticleSystem NoParticles;
+        [Space(10)]
+        public bool IsQuestionTrue;
 
         private bool _isCheckingAnswer;
 
@@ -29,16 +35,32 @@ namespace Borodar.LD34.Managers
 
         public void GenerateQuestion()
         {
-            IsThatTrue = Random.value > 0.5f;
-            QuestionText.GenerateQuestion(IsThatTrue);
+            IsQuestionTrue = Random.value > 0.5f;
+            QuestionText.GenerateQuestion(IsQuestionTrue);
         }
 
         public void CheckAnswer(bool answer)
         {
             if (_isCheckingAnswer) return;
 
-            DebugText.text = (answer == IsThatTrue) ? "Correct" : "Wrong";
+            var isAnswerCorrect = (answer == IsQuestionTrue);
+
+            DebugText.text = isAnswerCorrect ? "Correct" : "Wrong";
             DebugText.gameObject.SetActive(true);
+
+            if (isAnswerCorrect)
+            {
+                if (IsQuestionTrue)
+                {
+                    YesParticles.Play();
+                }
+                else
+                {
+                    NoParticles.Play();
+                    
+                }
+            }
+
             StartCoroutine(ShowResults());
 
             Background.CrossFadeColor();
@@ -52,6 +74,7 @@ namespace Borodar.LD34.Managers
         {
             _isCheckingAnswer = true;
             yield return new WaitForSeconds(1f);
+
             DebugText.gameObject.SetActive(false);
             GenerateQuestion();
             _isCheckingAnswer = false;
