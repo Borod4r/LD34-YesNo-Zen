@@ -7,16 +7,25 @@ namespace Borodar.LD34.Managers
 {
     public class SceneManager : Singleton<SceneManager>
     {
-        public QuestionText QuestionText;
-        public Text DebugText;
+        public Background Background;
+        public QuestionText QuestionText;        
+        public Text DebugText;        
         public bool IsThatTrue;
 
         private bool _isCheckingAnswer;
+
+        //---------------------------------------------------------------------
+        // Messages
+        //---------------------------------------------------------------------
 
         public void Start()
         {
             GenerateQuestion();
         }
+
+        //---------------------------------------------------------------------
+        // Public
+        //---------------------------------------------------------------------
 
         public void GenerateQuestion()
         {
@@ -31,7 +40,13 @@ namespace Borodar.LD34.Managers
             DebugText.text = (answer == IsThatTrue) ? "Correct" : "Wrong";
             DebugText.gameObject.SetActive(true);
             StartCoroutine(ShowResults());
+
+            Background.CrossFadeColor();
         }
+
+        //---------------------------------------------------------------------
+        // Helpers
+        //---------------------------------------------------------------------
 
         private IEnumerator ShowResults()
         {
