@@ -12,10 +12,13 @@ namespace Borodar.LD34.Managers
 
         [Space(10)]
         public Background Background;
+        [Space(10)]
         public Text TimeText;
         public Text ScoreText;
         public Text HighscoreText;
-        public Text ComplexityText;
+        public Text HighscoreToast;
+        [Space(10)]
+        public Text ComplexityToast;
         public Text QuestionText;
         public Text HintText;
         [Space(10)]
@@ -33,13 +36,16 @@ namespace Borodar.LD34.Managers
         private float _timeRemaining;
         private int _prevComplexity;
 
+        private bool _highscoreBeaten;
+
         //---------------------------------------------------------------------
         // Messages
         //---------------------------------------------------------------------
 
         public void Start()
         {
-            ComplexityText.canvasRenderer.SetAlpha(0f);
+            HighscoreToast.canvasRenderer.SetAlpha(0f);
+            ComplexityToast.canvasRenderer.SetAlpha(0f);
 
             var game = GlobalManager.Game;
             if (game.IsFirstRun)
@@ -87,7 +93,7 @@ namespace Borodar.LD34.Managers
             if (_prevComplexity < complexity)
             {
                 _prevComplexity = complexity;
-                StartCoroutine(ShowComplexityMessage());                
+                StartCoroutine(ShowToast(ComplexityToast));                
             }
         }
 
@@ -139,6 +145,12 @@ namespace Borodar.LD34.Managers
 
             ScoreText.text = "Score: " + _score.ToString("000");
             ScoreText.gameObject.SetActive(true);
+
+            if (!_highscoreBeaten && _score > GlobalManager.Game.HighScore && GlobalManager.Game.HighScore > 0)
+            {
+                _highscoreBeaten = true;
+                StartCoroutine(ShowToast(HighscoreToast));
+            }            
         }
 
         private void UpdateHighscore()
@@ -162,12 +174,12 @@ namespace Borodar.LD34.Managers
             _isCheckingAnswer = false;
         }
 
-        private IEnumerator ShowComplexityMessage()
+        private static IEnumerator ShowToast(Graphic toastText)
         {
             const float duration = 0.75f;
-            ComplexityText.CrossFadeAlpha(1f, duration, false);
+            toastText.CrossFadeAlpha(1f, duration, false);
             yield return new WaitForSeconds(duration + 0.5f);
-            ComplexityText.CrossFadeAlpha(0f, duration, false);
+            toastText.CrossFadeAlpha(0f, duration, false);
         }
 
         private IEnumerator GameOver()
