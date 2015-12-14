@@ -15,6 +15,7 @@ namespace Borodar.LD34.Managers
         public Text TimeText;
         public Text ScoreText;
         public Text HighscoreText;
+        public Text ComplexityText;
         public Text QuestionText;
         public Text HintText;
         [Space(10)]
@@ -30,6 +31,7 @@ namespace Borodar.LD34.Managers
         private bool _isCheckingAnswer;
         private int _score;
         private float _timeRemaining;
+        private int _prevComplexity;
 
         //---------------------------------------------------------------------
         // Messages
@@ -37,6 +39,8 @@ namespace Borodar.LD34.Managers
 
         public void Start()
         {
+            ComplexityText.canvasRenderer.SetAlpha(0f);
+
             var game = GlobalManager.Game;
             if (game.IsFirstRun)
             {
@@ -79,6 +83,12 @@ namespace Borodar.LD34.Managers
             _isQuestionTrue = Random.value > 0.5f;
 
             QuestionText.text = (_isQuestionTrue) ? _question.GetTrueString() : _question.GetFakeString();
+
+            if (_prevComplexity < complexity)
+            {
+                _prevComplexity = complexity;
+                StartCoroutine(ShowComplexityMessage());                
+            }
         }
 
         public void CheckAnswer(bool answer)
@@ -152,6 +162,14 @@ namespace Borodar.LD34.Managers
             _isCheckingAnswer = false;
         }
 
+        private IEnumerator ShowComplexityMessage()
+        {
+            const float duration = 0.75f;
+            ComplexityText.CrossFadeAlpha(1f, duration, false);
+            yield return new WaitForSeconds(duration + 0.5f);
+            ComplexityText.CrossFadeAlpha(0f, duration, false);
+        }
+
         private IEnumerator GameOver()
         {
             _isCheckingAnswer = true;
@@ -169,7 +187,6 @@ namespace Borodar.LD34.Managers
             else
             {
                 QuestionText.color = WrongColor;
-                //HintText.text = "Highscore: " + game.HighScore.ToString("000");
                 HintText.text = _question.GetTrueString();
                 HintText.gameObject.SetActive(true);
             }
